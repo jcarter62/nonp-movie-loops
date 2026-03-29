@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="movie-list-section">
+    <h2>Available Movies</h2>
+    
+    {% if request.query_params.get('error') %}
+        <div style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+            <strong>Error:</strong> {{ request.query_params.get('error') }}
+        </div>
+    {% endif %}
+    
+    <div class="filters">
+        <form action="/" method="get">
+            <input type="text" name="search" placeholder="Search by title..." value="{{ search or '' }}">
+            <select name="sort">
+                <option value="title" {% if sort == 'title' %}selected{% endif %}>Title</option>
+                <option value="date_added" {% if sort == 'date_added' %}selected{% endif %}>Date Added</option>
+                <option value="creation_date" {% if sort == 'creation_date' %}selected{% endif %}>Creation Date</option>
+                <option value="length_minutes" {% if sort == 'length_minutes' %}selected{% endif %}>Length</option>
+            </select>
+            <button type="submit">Filter & Sort</button>
+            <a href="/movies/add" class="btn btn-primary" style="margin-left: 10px;">Add New Movie</a>
+        </form>
+    </div>
+
+    <div class="movie-grid">
+        {% for movie in movies %}
+        <div class="movie-card">
+            <div class="movie-actions">
+                <a href="/movies/edit/{{ movie.id }}" class="btn btn-secondary btn-sm">Edit</a>
+            </div>
+            <a href="/play/{{ movie.id }}">
+                <div class="movie-poster">
+                    {% if movie.poster_image %}
+                        <img src="/movies/{{ movie.poster_image }}" alt="{{ movie.title }} Poster">
+                    {% else %}
+                        <div class="no-poster">No Poster</div>
+                    {% endif %}
+                </div>
+                <h3>{{ movie.title }}</h3>
+            </a>
+            <p>{{ movie.description | truncate(100) }}</p>
+            <p class="movie-meta">
+                Added: {{ movie.date_added.strftime('%Y-%m-%d') if movie.date_added else 'N/A' }} | 
+                Length: {{ movie.length_minutes }}m | 
+                Loop: {{ 'Yes' if movie.loop == 1 else 'No' }}
+            </p>
+        </div>
+        {% else %}
+        <p>No movies found.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background: #000;
+        color: #fff;
+    }
+    header, footer {
+        display: none;
+    }
+    .video-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #000;
+    }
+    video {
+        width: 100%;
+        height: 100%;
+        max-width: 100vw;
+        max-height: 100vh;
+        object-fit: contain;
+    }
+    .logo-overlay {
+        max-width: 150px;
+        max-height: 100px;
+        opacity: 0.5;
+        transition: opacity 0.3s;
+    }
+    .logo-overlay:hover {
+        opacity: 0.8;
+    }
+    .logo-overlay-link {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 100;
+        text-decoration: none;
+    }
+    .back-btn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 10;
+        padding: 10px 20px;
+        background: rgba(255, 255, 255, 0.5);
+        color: #000;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: background 0.3s;
+    }
+    .back-btn:hover {
+        background: rgba(255, 255, 255, 0.8);
+    }
+    .time-left-overlay {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        z-index: 100;
+        background: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-family: monospace;
+        font-size: 1.2em;
+        pointer-events: none;
+    }
+    .movie-info-overlay {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        z-index: 10;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 10px;
+        border-radius: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="video-container">
+    {% if settings and settings.org_logo %}
+    <a href="/" class="logo-overlay-link">
+        <img src="/movies/{{ settings.org_logo }}" alt="{{ settings.org_name }} Logo" class="logo-overlay">
+    </a>
+    {% else %}
+    <a href="/" class="back-btn">Back to Menu</a>
+    {% endif %}
+    
+    <video id="moviePlayer" controls autoplay {{ 'loop' if movie.loop == 1 else '' }}>
+        <source src="/movies/{{ movie.relative_file_path }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <div class="movie-info-overlay">
+        <h3>{{ movie.title }}</h3>
+        <p>{{ movie.description }}</p>
+    </div>
+
+    <div id="timeLeft" class="time-left-overlay"></div>
+</div>
+
+<script>
+    const video = document.getElementById('moviePlayer');
+    const isLooping = {{ 'true' if movie.loop == 1 else 'false' }};
+    const timeLeftDisplay = document.getElementById('timeLeft');
+    
+    video.onended = function() {
+        if (!isLooping) {
+            window.location.href = '/';
+        }
+    };
+
+    video.ontimeupdate = function() {
+        const remaining = video.duration - video.currentTime;
+        if (!isNaN(remaining)) {
+            const minutes = Math.floor(remaining / 60);
+            const seconds = Math.floor(remaining % 60);
+            timeLeftDisplay.textContent = 
+                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+    };
+
+    // To handle the case where the user might want to stop the loop,
+    // the "Back to Menu" button already handles redirecting.
+    // If "until the user presses a button" means a specific button during playback:
+    // Any button on screen or keyboard can be mapped.
+</script>
+{% endblock %}

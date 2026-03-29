@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ settings.org_name if settings else 'Non-Profit Movie Loops' }}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <header>
+        <div class="org-header">
+            {% if settings and settings.org_logo %}
+            <a href="/"><img src="/movies/{{ settings.org_logo }}" alt="{{ settings.org_name }} Logo" class="logo"></a>
+            {% endif %}
+            <div class="org-info">
+                <h1>{{ settings.org_name if settings else 'Non-Profit Organization' }}</h1>
+                <p>{{ settings.org_description if settings else '' }}</p>
+                <div class="contact-details">
+                    {% if settings %}
+                        {% if settings.org_website %}<a href="{{ settings.org_website }}" target="_blank">Website</a> | {% endif %}
+                        {% if settings.org_email %}<a href="mailto:{{ settings.org_email }}">{{ settings.org_email }}</a> | {% endif %}
+                        {% if settings.org_phone %}{{ settings.org_phone }} | {% endif %}
+                        {% if settings.org_contact_info %}{{ settings.org_contact_info }}{% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2026 {{ settings.org_name if settings else 'Non-Profit Organization' }} | <a href="/settings">Settings</a></p>
+    </footer>
+</body>
+</html>
