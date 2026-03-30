@@ -26,7 +26,7 @@ async def lifespan(app: FastAPI):
     try:
         settings = get_settings(db)
         
-        # Check if we have movies, if not add some dummy ones for demonstration
+        # Check if we have movies, if not, add some dummy ones for demonstration
         if db.query(models.Movie).count() == 0:
             dummy_movies = [
                 models.Movie(

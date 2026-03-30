@@ -25,9 +25,5 @@ env/
 # Backups
 *.zip
 
-#
-# Test code
-#
-test_*.*
 
 
