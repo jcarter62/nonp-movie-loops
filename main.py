@@ -13,7 +13,6 @@ from database import engine, Base, get_db, config
 import models
 from urllib.parse import quote
 import aiofiles
-import sqlite3
 
 # Create tables
 Base.metadata.create_all(bind=engine)
@@ -280,7 +279,7 @@ async def restore_settings(
                         item_path = os.path.join(target_movie_folder, item)
                         if os.path.isfile(item_path) or os.path.islink(item_path):
                             os.unlink(item_path)
-                        elif os.path.is_dir(item_path):
+                        elif os.path.isdir(item_path):
                             shutil.rmtree(item_path)
                     
                     # Copy files
