@@ -74,7 +74,7 @@ def get_settings(db: Session):
     return settings
 
 def ensure_folder_writable(folder_path: str):
-    """Ensure folder exists and is writable. Returns (success, error_message)"""
+    """Ensure the folder exists and is writable. Returns (success, error_message)"""
     try:
         os.makedirs(folder_path, exist_ok=True)
         # Verify it's writable
@@ -166,7 +166,7 @@ async def update_settings(
 ):
     settings = get_settings(db)
     
-    # Ensure movie folder exists and is writable
+    # Ensure the movie folder exists and is writable
     success, error_msg = ensure_folder_writable(config.movie_folder)
     if not success:
         return RedirectResponse(url=f"/settings?error={quote(f'Cannot use folder: {error_msg}')}", status_code=303)
@@ -214,11 +214,11 @@ async def backup_settings(background_tasks: BackgroundTasks, db: Session = Depen
     
     def create_zip():
         with zipfile.ZipFile(temp_zip_path, 'w', zipfile.ZIP_DEFLATED) as zf:
-            # Add database
+            # Add the database
             if os.path.exists(db_path):
                 zf.write(db_path, "database.sqlite")
             
-            # Add movie folder
+            # Add the movie folder
             if os.path.exists(movie_folder):
                 for root, dirs, files in os.walk(movie_folder):
                     for file in files:
@@ -349,7 +349,7 @@ async def add_movie(
             file_path = f"movie_{movie_file.filename}"
             full_path = os.path.join(config.movie_folder, file_path)
             
-            # Cleanup old movie if replacing (though it's a new movie record, 
+            # Clean up old movie if replacing (though it's a new movie record,
             # let's be safe if a file with the same name exists)
             if os.path.exists(full_path):
                 os.remove(full_path)
@@ -470,13 +470,13 @@ async def delete_movie(
         return RedirectResponse(url="/")
     
     try:
-        # Delete movie file
+        # Delete the movie file
         if movie.relative_file_path:
             movie_file_path = os.path.join(config.movie_folder, movie.relative_file_path)
             if os.path.exists(movie_file_path):
                 os.remove(movie_file_path)
         
-        # Delete poster image
+        # Delete the poster image
         if movie.poster_image:
             poster_path = os.path.join(config.movie_folder, movie.poster_image)
             if os.path.exists(poster_path):
